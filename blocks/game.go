@@ -1,7 +1,7 @@
 package blocks
 
 import (
-	"go-games/blocks/dice"
+	"games/blocks/dice"
 )
 
 type Game struct {

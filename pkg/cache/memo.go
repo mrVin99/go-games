@@ -20,10 +20,6 @@ type (
 	}
 )
 
-func NewMemo() Cache {
-	return &Memo{rds: rdsClient()}
-}
-
 func (m *Memo) Set(key string, obj any) error {
 	objBytes, err := json.Marshal(obj)
 	if err != nil {

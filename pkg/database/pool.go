@@ -14,13 +14,24 @@ func Conn() DB {
 }
 
 func init() {
-	log.Println("Connecting to database...")
-	connPool = &PG{connect()}
-
+	connPool = &PG{postgresPool()}
 	migrate()
 }
 
-func connect() *pgxpool.Pool {
+func postgresPool() *pgxpool.Pool {
+	pgAddr := func() string {
+		var (
+			addr       = os.Getenv("PG_URI")
+			defaultUrl = "postgres://postgres:postgres@localhost:5432/postgres"
+		)
+
+		if addr == "" {
+			addr = defaultUrl
+		}
+
+		return addr
+	}
+
 	config, err := pgxpool.ParseConfig(pgAddr())
 	if err != nil {
 		panic(err)
@@ -31,20 +42,11 @@ func connect() *pgxpool.Pool {
 		panic(err)
 	}
 
-	log.Println("Connected to database")
-
-	return pool
-}
-
-func pgAddr() string {
-	var (
-		addr       = os.Getenv("PG_URI")
-		defaultUrl = "postgres://postgres:postgres@localhost:5432/postgres"
-	)
-
-	if addr == "" {
-		addr = defaultUrl
+	if err = pool.Ping(context.Background()); err != nil {
+		panic(err)
 	}
 
-	return addr
+	log.Println("Connected to postgres")
+
+	return pool
 }

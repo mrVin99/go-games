@@ -1,14 +1,14 @@
 package blocks
 
 import (
+	"games/blocks/dice"
+	"games/blocks/message"
+	"games/blocks/player"
+	"games/pkg/cache"
+	"games/pkg/database"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"go-games/blocks/dice"
-	"go-games/blocks/message"
-	"go-games/blocks/player"
-	"go-games/pkg/cache"
-	"go-games/pkg/database"
 	"log"
 	"math/rand/v2"
 )

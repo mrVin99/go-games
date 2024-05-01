@@ -2,7 +2,7 @@ package player
 
 import (
 	"errors"
-	"go-games/pkg/database"
+	"games/pkg/database"
 )
 
 type Player struct {

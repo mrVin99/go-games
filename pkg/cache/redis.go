@@ -3,36 +3,43 @@ package cache
 import (
 	"context"
 	"github.com/redis/go-redis/v9"
+	"log"
 	"os"
-	"sync"
 )
 
-var (
-	once    sync.Once
-	rdsPool *redis.Client
-)
+var memory *Memo
 
-func rdsClient() *redis.Client {
-	once.Do(func() {
-		rdb := redis.NewClient(&redis.Options{
-			Addr: rdsAddr(),
-		})
+func Conn() *Memo {
+	return memory
+}
 
-		cmd := rdb.Ping(context.Background())
-		if _, err := cmd.Result(); err != nil {
-			panic(err)
+func init() {
+	memory = &Memo{redisPool()}
+}
+
+func redisPool() *redis.Client {
+	rdsAddr := func() string {
+		addr := os.Getenv("REDIS_ADDR")
+		if addr == "" {
+			addr = "localhost:6379"
 		}
 
-		rdsPool = rdb
-	})
-
-	return rdsPool
-}
-func rdsAddr() string {
-	addr := os.Getenv("REDIS_ADDR")
-	if addr == "" {
-		addr = "localhost:6379"
+		return addr
 	}
 
-	return addr
+	rds := redis.NewClient(&redis.Options{
+		Addr: rdsAddr(),
+	})
+
+	_, err := rds.
+		Ping(context.Background()).
+		Result()
+
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("Connected to redis")
+
+	return rds
 }
