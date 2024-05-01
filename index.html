@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="playButton">Play Game</button>
+<script>
+    const ws = new WebSocket("ws:/localhost:8080/ws/blocks");
+
+    ws.onopen = function (event) {
+        console.log("WebSocket connected.");
+
+        const message = {
+            type: "connect",
+            data: {
+                playerID: "1"
+            }
+        };
+
+        ws.send(JSON.stringify(message));
+    };
+
+    ws.onmessage = function (event) {
+        console.log("Received message:", event.data);
+    };
+
+    ws.onerror = function (error) {
+        console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = function (event) {
+        console.log("WebSocket connection closed.");
+    };
+
+    document.getElementById('playButton').addEventListener('click', () => {
+        const message = {
+            type: "bet",
+            data: {
+                playerID: "1",
+                betAmount: 10,
+                risk: "high"
+            }
+        };
+
+
+        ws.send(JSON.stringify(message));
+    });
+</script>
+</body>
+</html>
